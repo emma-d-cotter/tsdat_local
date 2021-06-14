@@ -37,5 +37,5 @@ class DummyFileHandler(AbstractFileHandler):
             xr.Dataset: An xr.Dataset object
         -------------------------------------------------------------------"""
 
-        df = pd.read_csv(filename, sep="\t", header=41, index_col=False)
+        df = pd.read_csv(filename, sep=",")
         return df.to_xarray()

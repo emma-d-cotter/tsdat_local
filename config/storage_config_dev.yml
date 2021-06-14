@@ -11,14 +11,14 @@ storage:
   file_handlers:
     # Input handlers are used to read input files
     input:
-      sta:
-        file_pattern: '.*\.sta'
+      csv:
+        file_pattern: '.*\.csv'
         classname: tsdat.io.filehandlers.CsvHandler
         parameters:
           read:
             read_csv:
-              sep: "\t"
-              header: 41
+              sep: ","
+              header: 0
               index_col: False
     
     # You can create your own FileHandler to read custom file formats

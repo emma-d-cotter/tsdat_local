@@ -27,6 +27,7 @@ def run_pipeline(mode: str = 'prod', input_files: List[str] = []):
     # If no files specified, then use the data/inputs directory
     if len(input_files) == 0:
         input_files = [os.path.join(data_dir, 'inputs')]
+       # print(input_files)
 
     # Run the pipeline on the given files.
     for file_path in input_files:
