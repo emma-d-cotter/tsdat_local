@@ -4,7 +4,7 @@ from tsdat.io import AbstractFileHandler
 from tsdat import Config
 
 
-class DummyFileHandler(AbstractFileHandler):
+class TideGageFileHandler(AbstractFileHandler):
     """-------------------------------------------------------------------
     Custom file handler for reading *.sta files.
 
@@ -37,5 +37,8 @@ class DummyFileHandler(AbstractFileHandler):
             xr.Dataset: An xr.Dataset object
         -------------------------------------------------------------------"""
 
-        df = pd.read_csv(filename, sep=",")
+        #df = pd.read_csv(filename, sep=",")
+        df = pd.read_csv(filename, sep=" ", header=None, names = ('date','time','flag','data'))
+        df['time'] = df['date'] + ' ' + df['time']
+        df = df.drop(columns=['date'])
         return df.to_xarray()

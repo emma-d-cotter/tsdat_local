@@ -70,8 +70,8 @@ class Pipeline(IngestPipeline):
             xr.Dataset: The customized dataset.
         -------------------------------------------------------------------"""
 
-        dataset['mass'].data = dataset['mass'].data + 5
-        dataset['mass'].attrs['correctionsapplied'] = 'added 5 because why not'
+       # dataset['mass'].data = dataset['mass'].data + 5
+       # dataset['mass'].attrs['correctionsapplied'] = 'added 5 because why not'
 
         return dataset
 
@@ -120,17 +120,23 @@ class Pipeline(IngestPipeline):
                                     QC applied.
         -------------------------------------------------------------------"""
 
-        filename = DSUtil.get_plot_filename(dataset, "mass", "png")
-        with self.storage._tmp.get_temp_filepath(filename) as tmp_path:
+        # filename = DSUtil.get_plot_filename(dataset, "mass", "png")
+        # with self.storage._tmp.get_temp_filepath(filename) as tmp_path:
 
-            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(6,3),constrained_layout=1)
-            fig.suptitle('plottin\' some data!')
-            ax.plot(dataset['time'].data , dataset['mass'].data)
-            plt.grid()
-            ax.set_xlabel('time')
-            ax.set_ylabel('mass (kg)')
-            fig.savefig(tmp_path,dpi=100)
-            self.storage.save(tmp_path)
-            plt.close()
+        #     fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(6,3),constrained_layout=1)
+        #     fig.suptitle('plottin\' some data!')
+        #     ax.plot(dataset['time'].data , dataset['mass'].data)
+        #     plt.grid()
+        #     ax.set_xlabel('time')
+        #     ax.set_ylabel('mass (kg)')
+        #     fig.savefig(tmp_path,dpi=100)
+        #     self.storage.save(tmp_path)
+        #     plt.close()
+
+        # filename = DSUtil.get_plot_filename(dataset, "qc_mass", "png")
+        # with self.storage._tmp.get_temp_filepath(filename) as tmp_path:
+        #     fig, ax = plt.subplots(figsize=(10,5))
+        #     DSUtil.plot_qc(dataset, "mass", tmp_path)
+        #     self.storage.save(tmp_path)
 
         return

@@ -1,16 +1,16 @@
 pipeline:
   type: Ingest
 
-  location_id: myhouse2
-  dataset_name: noisynoise
-  qualifier: matlab
-  temporal: 10Hz
+  location_id: sequim
+  dataset_name: testtide
+  qualifier: tidegage
+  temporal: 5min
   data_level: a1
 
 dataset_definition:
   attributes:
-    title: Example ingest of matlab generated noise data
-    description: not very useful data, that's for sure
+    title: Sequim Tide Gage
+    description: sequim tide gage data for SequimData project
     conventions: "ME Data Pipeline Standards: Version 1.0"
     institution: Pacific Northwest National Laboratory
     code_url: https://github.com/emma-d-cotter/tsdat_local
@@ -24,12 +24,12 @@ dataset_definition:
 
     time:
       input:
-        name: Var1
+        name: time
         converter:
           classname: tsdat.utils.converters.StringTimeConverter
           parameters:
             timezone: UTC
-            time_format: "%m/%d/%Y %H:%M:%S.%f"
+            time_format: "%Y-%m-%d %H:%M:%S,%f"
       dims: [time]
       type: long
       attrs:
@@ -37,21 +37,21 @@ dataset_definition:
         standard_name: time
         units: seconds since 1970-01-01T00:00:00
 
-    mass:
+    elevation:
       input:
-        name: Var2
-        units: mg
+        name: data
+        units: m
       dims: [time]
       type: float
       attrs:
-        long_name: mass
-        description: "mass of the substance at the time"
-        standard_name: mass
-        units: mg
-      #  fail_range: [0.0, 50.0]
+        long_name: Tidal Elevation (m)
+        description: "tidal elevation"
+        standard_name: elevation
+        units: m
+       # fail_range: [0.0, 5.1]
 
 #-----------------------------------------------------------------
-quality_management:
+#quality_management:
 
   #---------------------------------------------------------------
   # manage_missing_coordinates:
@@ -62,38 +62,38 @@ quality_management:
   #   variables:
   #     - mass
 
-  manage_coordinate_monotonicity:
-    checker:
-      classname: tsdat.qc.checkers.CheckMonotonic
-    handlers:
-      - classname: tsdat.qc.handlers.FailPipeline
-    variables:
-      - time
- # ---------------------------------------------------------------
-    manage_missing_values:
-      checker:
-        classname: tsdat.qc.checkers.CheckMissing
-      handlers:
-        - classname: tsdat.qc.handlers.RemoveFailedValues
-        - classname: tsdat.qc.handlers.RecordQualityResults
-          parameters:
-            bit: 2
-            assessment: Bad
-            meaning: "Value is equal to _FillValue or NaN"
-      variables:
-        - DATA_VARS
+#   manage_coordinate_monotonicity:
+#     checker:
+#       classname: tsdat.qc.checkers.CheckMonotonic
+#     handlers:
+#       - classname: tsdat.qc.handlers.FailPipeline
+#     variables:
+#       - time
+#  # ---------------------------------------------------------------
+#   manage_missing_values:
+#     checker:
+#       classname: tsdat.qc.checkers.CheckMissing
+#     handlers:
+#       - classname: tsdat.qc.handlers.RemoveFailedValues
+#       - classname: tsdat.qc.handlers.RecordQualityResults
+#         parameters:
+#           bit: 1
+#           assessment: Bad
+#           meaning: "Value is equal to _FillValue or NaN"
+#     variables:
+#       - mass
 
-  # manage_fail_min:
-  #   checker:
-  #     classname: tsdat.qc.checkers.CheckFailMin
-  #   handlers:
-  #     - classname: tsdat.qc.handlers.RecordQualityResults
-  #       parameters:
-  #         bit: 3
-  #         assessment: Bad
-  #         meaning: "Value is less than fail_range"
-  #   variables:
-  #     - mass
+#   manage_fail_min:
+#     checker:
+#       classname: tsdat.qc.checkers.CheckFailMin
+#     handlers:
+#       - classname: tsdat.qc.handlers.RecordQualityResults
+#         parameters:
+#           bit: 2
+#           assessment: Bad
+#           meaning: "Value is less than fail_range"
+#     variables:
+#       - mass
 
   # manage_fail_max:
   #   checker:

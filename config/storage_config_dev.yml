@@ -11,15 +11,15 @@ storage:
   file_handlers:
     # Input handlers are used to read input files
     input:
-      csv:
-        file_pattern: '.*\.csv'
-        classname: tsdat.io.filehandlers.CsvHandler
-        parameters:
-          read:
-            read_csv:
-              sep: ","
-              header: 0
-              index_col: False
+      log:
+        file_pattern: '.*\.log'
+        classname: pipeline.filehandlers.TideGageFileHandler
+        # parameters:
+        #   read:
+        #     read_csv:
+        #       sep: " "
+        #       header: None
+        #       index_col: False
     
     # You can create your own FileHandler to read custom file formats
     # as shown below. 
