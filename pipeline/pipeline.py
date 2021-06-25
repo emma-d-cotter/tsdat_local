@@ -119,24 +119,49 @@ class Pipeline(IngestPipeline):
             dataset (xr.Dataset):   The xarray dataset with customizations and
                                     QC applied.
         -------------------------------------------------------------------"""
+        # extract QC info and create masks
+        # NOTE: this is hard coded for a max of 4 QC checks. Increase .zfill(4) to .zfill(x) if more QC checks are added
+        mask_keys = dataset['qc_elevation'].attrs['flag_masks']
+        mask_meanings = dataset['qc_elevation'].attrs['flag_meanings']
 
-        # filename = DSUtil.get_plot_filename(dataset, "mass", "png")
-        # with self.storage._tmp.get_temp_filepath(filename) as tmp_path:
+        masks_bin = [bin(int(x))[2:].zfill(4)[::-1] for x in mask_keys]
+        masks_bin_idx = [x.find('1')+1 for x in masks_bin]
 
-        #     fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(6,3),constrained_layout=1)
-        #     fig.suptitle('plottin\' some data!')
-        #     ax.plot(dataset['time'].data , dataset['mass'].data)
-        #     plt.grid()
-        #     ax.set_xlabel('time')
-        #     ax.set_ylabel('mass (kg)')
-        #     fig.savefig(tmp_path,dpi=100)
-        #     self.storage.save(tmp_path)
-        #     plt.close()
+        masks = np.zeros((len(dataset['qc_elevation']),len(mask_keys)))
+        for i, idx in enumerate(masks_bin_idx):
+            qc_bin = [bin(int(x))[2:].zfill(4)[::-1] for x in dataset['qc_elevation'].values]
+            masks[:,i] = [bool(int(x[idx])) for x in qc_bin]
+        bad_data = np.sum(masks,1).astype(bool)
 
-        # filename = DSUtil.get_plot_filename(dataset, "qc_mass", "png")
-        # with self.storage._tmp.get_temp_filepath(filename) as tmp_path:
-        #     fig, ax = plt.subplots(figsize=(10,5))
-        #     DSUtil.plot_qc(dataset, "mass", tmp_path)
-        #     self.storage.save(tmp_path)
+        # plot data that passed QC
+        filename = DSUtil.get_plot_filename(dataset, "elevation", "png")
+        with self.storage._tmp.get_temp_filepath(filename) as tmp_path:
+            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(6,3),constrained_layout=1)
+            fig.suptitle('Tidal Elevation (after QC)')
+            y = dataset['elevation']
+            y[bad_data] = np.nan
+            ax.plot(dataset['time'],y)
+            fig.savefig(tmp_path,dpi=100)
+            self.storage.save(tmp_path)
+                        
+        # plot QC results
+        filename = DSUtil.get_plot_filename(dataset, "qc_elevation", "png")
+        with self.storage._tmp.get_temp_filepath(filename) as tmp_path:
+            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(10,3),constrained_layout=1)
+            fig.suptitle('Tidal Elevation QC')
+            for i, idx in enumerate(mask_keys):
+                y = idx*np.ones(len(dataset['elevation']))
+                mask = masks[:,i].astype(bool)
+                y[np.invert(mask)] = np.nan
+                ax.plot(dataset['time'],y,'o')
+
+            y = np.zeros(len(dataset['elevation']))
+            y[bad_data] = np.nan
+            ax.plot(dataset['time'],y,'o')
+            ax.set_ylim((0,np.max(masks_bin_idx)))
+            ax.set_yticks(np.arange(0,np.max(masks_bin_idx)+1))
+            ax.set_yticklabels(['good_data'] + mask_meanings)
+            fig.savefig(tmp_path,dpi=100)
+            self.storage.save(tmp_path)
 
         return
