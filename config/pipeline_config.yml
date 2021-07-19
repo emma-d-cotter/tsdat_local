@@ -48,19 +48,19 @@ dataset_definition:
         description: "tidal elevation"
         standard_name: elevation
         units: m
-       # fail_range: [0.0, 5.1]
+        fail_range: [0.1, 15]
 
 #-----------------------------------------------------------------
-#quality_management:
+quality_management:
 
-  #---------------------------------------------------------------
-  # manage_missing_coordinates:
-  #   checker:
-  #     classname: tsdat.qc.checkers.CheckMissing
-  #   handlers:
-  #     - classname: tsdat.qc.handlers.FailPipeline
-  #   variables:
-  #     - mass
+ # ---------------------------------------------------------------
+    # manage_missing_coordinates:
+    #   checker:
+    #     classname: tsdat.qc.checkers.CheckMissing
+    #   handlers:
+    #     - classname: tsdat.qc.handlers.FailPipeline
+    #   variables:
+    #     - elevation
 
 #   manage_coordinate_monotonicity:
 #     checker:
@@ -70,39 +70,39 @@ dataset_definition:
 #     variables:
 #       - time
 #  # ---------------------------------------------------------------
-#   manage_missing_values:
-#     checker:
-#       classname: tsdat.qc.checkers.CheckMissing
-#     handlers:
-#       - classname: tsdat.qc.handlers.RemoveFailedValues
-#       - classname: tsdat.qc.handlers.RecordQualityResults
-#         parameters:
-#           bit: 1
-#           assessment: Bad
-#           meaning: "Value is equal to _FillValue or NaN"
-#     variables:
-#       - mass
+  manage_missing_values:
+    checker:
+      classname: tsdat.qc.checkers.CheckMissing
+    handlers:
+      - classname: tsdat.qc.handlers.RemoveFailedValues
+      - classname: tsdat.qc.handlers.RecordQualityResults
+        parameters:
+          bit: 3
+          assessment: Bad
+          meaning: "Value is equal to _FillValue or NaN"
+    variables:
+      - elevation
 
-#   manage_fail_min:
-#     checker:
-#       classname: tsdat.qc.checkers.CheckFailMin
-#     handlers:
-#       - classname: tsdat.qc.handlers.RecordQualityResults
-#         parameters:
-#           bit: 2
-#           assessment: Bad
-#           meaning: "Value is less than fail_range"
-#     variables:
-#       - mass
+  manage_fail_min:
+    checker:
+      classname: tsdat.qc.checkers.CheckFailMin
+    handlers:
+      - classname: tsdat.qc.handlers.RecordQualityResults
+        parameters:
+          bit: 2
+          assessment: Bad
+          meaning: "Value is less than fail_range"
+    variables:
+      - elevation
 
-  # manage_fail_max:
-  #   checker:
-  #     classname: tsdat.qc.checkers.CheckFailMax
-  #   handlers:
-  #     - classname: tsdat.qc.handlers.RecordQualityResults
-  #       parameters:
-  #         bit: 999
-  #         assessment: Bad
-  #         meaning: "Value is greater than fail_range"
-  #   variables:
-  #     - mass
+  manage_fail_max:
+    checker:
+      classname: tsdat.qc.checkers.CheckFailMax
+    handlers:
+      - classname: tsdat.qc.handlers.RecordQualityResults
+        parameters:
+          bit: 1
+          assessment: Bad
+          meaning: "Value is greater than fail_range"
+    variables:
+      - elevation
